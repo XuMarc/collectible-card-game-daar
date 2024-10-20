@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import styles from './styles.module.css'
 import * as ethereum from '@/lib/ethereum'
 import * as main from '@/lib/main'
+import NavBar from './components/NavBar'
+import HomePage from './components/HomePage'
+import CollectionsPage from './components/CollectionsPage'
+import CollectionCardsPage from './components/CollectionCardsPage'
+import MintCardPage from './components/MintCardPage'
 
 type Canceler = () => void
 const useAffect = (
@@ -38,12 +44,42 @@ const useWallet = () => {
     return { details, contract }
   }, [details, contract])
 }
-
 export const App = () => {
-  const wallet = useWallet()
+  const wallet = useWallet() // Ajout de `loading`
+  const [users, setUsers] = useState<string[]>([])
+  const [selectedUser, setSelectedUser] = useState<string>('')
+
+  const addUser = (user: string) => {
+    if (!users.includes(user)) {
+      setUsers([...users, user])
+    }
+  }
+
+  const [newUser, setNewUser] = useState('')
+
+  const handleAddUser = () => {
+    if (newUser) {
+      addUser(newUser)
+      setNewUser('')
+    }
+  }
+
   return (
-    <div className={styles.body}>
-      <h1>Welcome to Pokémon TCG</h1>
-    </div>
+    <>
+      <Router>
+        <NavBar
+          addUser={addUser}
+          setSelectedUser={setSelectedUser}
+          users={users}
+          selectedUser={selectedUser}
+        />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/collections" element={<CollectionsPage />} />
+          <Route path="/collections/:id" element={<CollectionCardsPage />} />
+          <Route path="/mint" element={<MintCardPage users={users} />} />
+        </Routes>
+      </Router>
+    </>
   )
 }

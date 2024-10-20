@@ -3,31 +3,72 @@ pragma solidity ^0.8.20;
 
 import "./Collection.sol";
 
-contract Main {
-  uint private globalCardId; // idcard across all collections, (should it be unique globally or only in a collection ?)
-  uint private count;
-  mapping(uint => Collection) private collections; //hashmap(id,collection);
+contract Main is Ownable {
+    int private count;
+    mapping(int => Collection) private collections;
+    mapping(string => Collection) private collectionsById;
+    // mapping(string => uint) public maxMintPerCard; // Limite maximale pour chaque carte
+    // mapping(string => uint) public mintedCountPerCard; // Compteur de cartes mintées pour chaque type de carte
 
-  address public owner;
-  modifier onlyOwner() {
-    require(msg.sender == owner, "SEUL L'ADMIN PEUT APPELER CETTE FONCTION !");
-    _;
-  }
+    address[] public users;
 
-  constructor() {
-    count = 0;
-    globalCardId = 1;
-    owner = msg.sender; // Celui qui déploie le contrat(moi) est le owner 
-  }
+    event CollectionCreated(string name);
+    event TOKENID(uint256 id);
+    // address public owner;
 
-  function createCollection(string calldata name, uint cardCount) external onlyOwner{
-    collections[count++] = new Collection(name, cardCount);
-  }
+    constructor() Ownable(0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199) {
+        count = 1;
+        // owner = msg.sender;
+    }
 
-  function mint(uint256 collectionId, address to, string memory tokenURI) external onlyOwner {
-    require(collectionId < count, "COLLECTION DOES NOT EXIST");
-    Collection collection = collections[collectionId];
-    collection.mintCard(to, tokenURI, globalCardId);
-    globalCardId++;
-  }
+  // Créer une collection avec les cartes associées
+    function createCollectionWithCards(string calldata id, string calldata name, uint cardCount) external onlyOwner {
+        emit CollectionCreated(name);
+
+        address owner = address(this);
+        Collection collection = new Collection(owner, name, cardCount);
+        collections[count++] = collection;
+        collectionsById[id] = collections[count-1];
+
+        // for (uint i = 0; i < cardCount; i++) {
+        //     // Définir une limite de mint de 5 pour chaque carte
+        //     maxMintPerCard[cardNames[i]] = 5;
+        // }
+    }
+
+    // Mint une carte après vérification de la limite
+    function mint(string calldata collectionId, address to, string memory tokenURI) external onlyOwner returns(uint256){
+        // require(mintedCountPerCard[cardName] < maxMintPerCard[cardName], "Limite de mint atteinte pour cette carte");
+
+        uint256 tokenId = collectionsById[collectionId].mintCard(to, tokenURI);
+        emit TOKENID(tokenId);
+
+        return tokenId;
+        // Collection collection = collections[collectionId];
+        // uint256 tokenId = collection.mintCard(to, tokenURI, globalCardId);
+
+        // mintedCountPerCard[cardName] += 1;
+        // globalCardId++;
+    }
+
+    // // Obtenir le nombre de cartes mintées pour une carte spécifique
+    // function getMintedCountForCard(string memory cardName) external view returns (uint) {
+    //     return mintedCountPerCard[cardName];
+    // }
+
+    // // Obtenir la limite de mint pour une carte spécifique
+    // function getMaxMintForCard(string memory cardName) external view returns (uint) {
+    //     return maxMintPerCard[cardName];
+    // }
+    
+    // Fonction pour récupérer les cartes d'un utilisateur dans une collection spécifique
+    function getUserCards(int collectionId, address user) external view returns (uint256[] memory) {
+        Collection collection = collections[collectionId];
+        return collection.getUserTokens(user);
+    }
+
+    function getUsers() public view returns(address[] memory) {
+      return users;
+
+    }
 }
