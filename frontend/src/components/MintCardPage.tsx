@@ -29,16 +29,39 @@ const MintCardPage = ({ users }: { users: string[] }) => {
   const [message, setMessage] = useState('')
 
   // Récupère les collections avec les cartes associées
+  // useEffect(() => {
+  //   axios
+  //     .get('http://localhost:3001/getCollectionsWithCards')
+  //     .then(response => {
+  //       setCollections(response.data.collections)
+  //     })
+  //     .catch(error => {
+  //       console.error('Erreur lors de la récupération des collections:', error)
+  //     })
+  // }, [])
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/getCollectionsWithCards')
-      .then(response => {
+    const fetchCollections = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:3001/getCollectionsFromContract'
+        )
         setCollections(response.data.collections)
-      })
-      .catch(error => {
+        console.log('COLLECTIONS : ', response.data.collections)
+      } catch (error) {
         console.error('Erreur lors de la récupération des collections:', error)
-      })
+        setMessage('Erreur lors de la récupération des collections.')
+      }
+    }
+
+    fetchCollections()
   }, [])
+
+  useEffect(() => {
+    if (selectedCard) {
+
+      handleMint();
+    }
+  }, [selectedCard]);
 
   //   const handleMint = () => {
   //     if (!selectedUser || !selectedCard || !selectedCollection) {
@@ -111,269 +134,283 @@ const MintCardPage = ({ users }: { users: string[] }) => {
   //   }
   // }
 
-
   const handleMint = async () => {
     if (!selectedUser || !selectedCard || !selectedCollection) {
-      setMessage('Veuillez sélectionner un utilisateur, une collection et une carte.');
-      return;
+      setMessage(
+        'Veuillez sélectionner un utilisateur, une collection et une carte.'
+      )
+      return
     }
-  
+    console.log("HERE2222 : ",selectedCard,selectedCollection,selectedUser);
+
+
     try {
       // Vérifiez si MetaMask est disponible
       if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-  
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+
         // Demander à MetaMask la permission de se connecter
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-  
+        await window.ethereum.request({ method: 'eth_requestAccounts' })
+
         // Obtenir le signer (utilisateur connecté via MetaMask)
-        const signer = provider.getSigner();
-        const userAddress = await signer.getAddress();
-  
-        console.log('Minting with account:', userAddress);
-  
+        const signer = provider.getSigner()
+        const userAddress = await signer.getAddress()
+
+        console.log('Minting with account:', userAddress)
+
         // Initialiser le contrat avec le signer de MetaMask
         // const contract = require('../../contracts/artifacts/src/Main.sol/Main.json');
         // const mainContractAbi = contract.abi; // Assurez-vous que Main.json contient l'ABI du contrat
         let abi = [
           {
-            "inputs": [],
-            "stateMutability": "nonpayable",
-            "type": "constructor"
+            inputs: [],
+            stateMutability: 'nonpayable',
+            type: 'constructor',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: 'owner',
+                type: 'address',
+              },
             ],
-            "name": "OwnableInvalidOwner",
-            "type": "error"
+            name: 'OwnableInvalidOwner',
+            type: 'error',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: 'account',
+                type: 'address',
+              },
             ],
-            "name": "OwnableUnauthorizedAccount",
-            "type": "error"
+            name: 'OwnableUnauthorizedAccount',
+            type: 'error',
           },
           {
-            "anonymous": false,
-            "inputs": [
+            anonymous: false,
+            inputs: [
               {
-                "indexed": false,
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-              }
+                indexed: false,
+                internalType: 'string',
+                name: 'name',
+                type: 'string',
+              },
             ],
-            "name": "CollectionCreated",
-            "type": "event"
+            name: 'CollectionCreated',
+            type: 'event',
           },
           {
-            "anonymous": false,
-            "inputs": [
+            anonymous: false,
+            inputs: [
               {
-                "indexed": true,
-                "internalType": "address",
-                "name": "previousOwner",
-                "type": "address"
+                indexed: true,
+                internalType: 'address',
+                name: 'previousOwner',
+                type: 'address',
               },
               {
-                "indexed": true,
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-              }
+                indexed: true,
+                internalType: 'address',
+                name: 'newOwner',
+                type: 'address',
+              },
             ],
-            "name": "OwnershipTransferred",
-            "type": "event"
+            name: 'OwnershipTransferred',
+            type: 'event',
           },
           {
-            "anonymous": false,
-            "inputs": [
+            anonymous: false,
+            inputs: [
               {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "id",
-                "type": "uint256"
-              }
+                indexed: false,
+                internalType: 'uint256',
+                name: 'id',
+                type: 'uint256',
+              },
             ],
-            "name": "TOKENID",
-            "type": "event"
+            name: 'TOKENID',
+            type: 'event',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "string",
-                "name": "id",
-                "type": "string"
+                internalType: 'string',
+                name: 'id',
+                type: 'string',
               },
               {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
+                internalType: 'string',
+                name: 'name',
+                type: 'string',
               },
               {
-                "internalType": "uint256",
-                "name": "cardCount",
-                "type": "uint256"
-              }
+                internalType: 'uint256',
+                name: 'cardCount',
+                type: 'uint256',
+              },
             ],
-            "name": "createCollectionWithCards",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
+            name: 'createCollectionWithCards',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "int256",
-                "name": "collectionId",
-                "type": "int256"
+                internalType: 'int256',
+                name: 'collectionId',
+                type: 'int256',
               },
               {
-                "internalType": "address",
-                "name": "user",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: 'user',
+                type: 'address',
+              },
             ],
-            "name": "getUserCards",
-            "outputs": [
+            name: 'getUserCards',
+            outputs: [
               {
-                "internalType": "uint256[]",
-                "name": "",
-                "type": "uint256[]"
-              }
+                internalType: 'uint256[]',
+                name: '',
+                type: 'uint256[]',
+              },
             ],
-            "stateMutability": "view",
-            "type": "function"
+            stateMutability: 'view',
+            type: 'function',
           },
           {
-            "inputs": [],
-            "name": "getUsers",
-            "outputs": [
+            inputs: [],
+            name: 'getUsers',
+            outputs: [
               {
-                "internalType": "address[]",
-                "name": "",
-                "type": "address[]"
-              }
+                internalType: 'address[]',
+                name: '',
+                type: 'address[]',
+              },
             ],
-            "stateMutability": "view",
-            "type": "function"
+            stateMutability: 'view',
+            type: 'function',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "string",
-                "name": "collectionId",
-                "type": "string"
+                internalType: 'string',
+                name: 'collectionId',
+                type: 'string',
               },
               {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
+                internalType: 'address',
+                name: 'to',
+                type: 'address',
               },
               {
-                "internalType": "string",
-                "name": "tokenURI",
-                "type": "string"
-              }
+                internalType: 'string',
+                name: 'tokenURI',
+                type: 'string',
+              },
             ],
-            "name": "mint",
-            "outputs": [
+            name: 'mint',
+            outputs: [
               {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-              }
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+              },
             ],
-            "stateMutability": "nonpayable",
-            "type": "function"
+            stateMutability: 'nonpayable',
+            type: 'function',
           },
           {
-            "inputs": [],
-            "name": "owner",
-            "outputs": [
+            inputs: [],
+            name: 'owner',
+            outputs: [
               {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: '',
+                type: 'address',
+              },
             ],
-            "stateMutability": "view",
-            "type": "function"
+            stateMutability: 'view',
+            type: 'function',
           },
           {
-            "inputs": [],
-            "name": "renounceOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
+            inputs: [],
+            name: 'renounceOwnership',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: 'newOwner',
+                type: 'address',
+              },
             ],
-            "name": "transferOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
+            name: 'transferOwnership',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-              }
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+              },
             ],
-            "name": "users",
-            "outputs": [
+            name: 'users',
+            outputs: [
               {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: '',
+                type: 'address',
+              },
             ],
-            "stateMutability": "view",
-            "type": "function"
-          }
-        ];
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ]
         // Adresse du contrat Main déployé
-        const mainContract = new ethers.Contract('0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', abi, signer);
-  
+        const mainContract = new ethers.Contract(
+          '0x5fbdb2315678afecb367f032d93f642f64180aa3',
+          abi,
+          signer
+        )
+
+        console.log("JUST BEFORE CALL TO MAINCONTRACT : COLLID,USER,CARDURI:",selectedCollection.id, selectedUser,selectedCard.uri);
         // Appeler la fonction de mint sur le contrat
-        const tx = await mainContract.mint(selectedCollection.id, selectedUser, selectedCard.uri);
-  
+        const tx = await mainContract.mint(
+          selectedCollection.id,
+          selectedUser,
+          selectedCard.uri
+        )
+
+        console.log("passed everything so far2");
+
         // Attendre que la transaction soit confirmée
-        await tx.wait();
-  
-        setMessage('Mint réussi ! Transaction confirmée.');
+        await tx.wait()
+
+        setMessage('Mint réussi ! Transaction confirmée.')
       } else {
-        setMessage("MetaMask non détecté. Veuillez l'installer.");
+        setMessage("MetaMask non détecté. Veuillez l'installer.")
       }
     } catch (err) {
       if (err instanceof Error) {
-        setMessage(`Erreur lors du mint : ${err.message}`);
-        console.error('Erreur : ', err.message);
+        setMessage(`Erreur lors du mint : ${err.message}`)
+        console.error('Erreur : ', err.message)
       } else {
-        setMessage('Une erreur inconnue est survenue.');
-        console.error('Erreur inconnue : ', err);
+        setMessage('Une erreur inconnue est survenue.')
+        console.error('Erreur inconnue : ', err)
       }
     }
-  };
-  
+  }
+
   return (
     <div>
       <h2>Mint une carte</h2>
@@ -394,48 +431,66 @@ const MintCardPage = ({ users }: { users: string[] }) => {
       </div>
 
       <div>
-        <h3>Sélectionnez une collection :</h3>
-        <select
-          value={selectedCollection ? selectedCollection.id : ''}
-          onChange={e => {
-            const collection = collections.find(
-              col => col.id === e.target.value
-            )
-            setSelectedCollection(collection || null)
-            setSelectedCard(null) // Réinitialise la carte sélectionnée
-          }}
-        >
-          <option value="">Sélectionnez une collection</option>
+        <h3>Collections disponibles :</h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {collections.map(collection => (
-            <option key={collection.id} value={collection.id}>
-              {collection.name}
-            </option>
+            <div
+              key={collection.id}
+              style={{
+                border: '1px solid #ddd',
+                padding: '20px',
+                margin: '10px',
+                width: '300px',
+                cursor: 'pointer',
+                textAlign: 'center',
+              }}
+              onClick={() => setSelectedCollection(collection)}
+            >
+              <h4>{collection.name}</h4>
+              {collection.cards.length > 0 && (
+                <img
+                  src={collection.cards[0].uri}
+                  alt={collection.name}
+                  style={{ width: '100%', height: 'auto' }}
+                />
+              )}
+            </div>
           ))}
-        </select>
+        </div>
       </div>
 
       {selectedCollection && (
         <div>
-          <h3>Sélectionnez une carte :</h3>
-          <select
-            onChange={e => {
-              const card = selectedCollection.cards.find(
-                c => c.name === e.target.value
-              )
-              setSelectedCard(card || null)
-            }}
-          >
-            <option value="">Sélectionnez une carte</option>
+          <h3>Cartes dans la collection : {selectedCollection.name}</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
             {selectedCollection.cards.map(card => (
-              <option key={card.id} value={card.name}>
-                {card.name}
-              </option>
+              <div
+                key={card.id}
+                style={{
+                  border: '1px solid #ddd',
+                  padding: '20px',
+                  margin: '10px',
+                  width: '200px',
+                  textAlign: 'center',
+                }}
+              >
+                <h4>{card.name}</h4>
+                <img
+                  src={card.uri}
+                  alt={card.name}
+                  style={{ width: '100%', height: 'auto' }}
+                />
+                <button
+                  onClick={() => setSelectedCard(card)}
+                  style={{ marginTop: '10px' }}
+                >
+                  Mint {card.name}
+                </button>
+              </div>
             ))}
-          </select>
+          </div>
         </div>
       )}
-
-      <button onClick={handleMint}>Mint la carte</button>
 
       {message && <p>{message}</p>}
     </div>

@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 
-const {getCollections, getCollectionById, getCards, getCardById, getCollectionsWithCards, getUserCardsByCollection, getCardsByCollection, mintCard, initCollections} = require('./api')
+const {getCollections, getCollectionById, createCollectionWithCards, getCollectionsFromContract, getCards, getCardById, getCollectionsWithCards, getUserCardsByCollection, getCardsByCollection, mintCard, initCollections} = require('./api')
 
 app.use(express.json());
 app.use(cors());
@@ -14,7 +14,7 @@ app.use((req,res,next) => {
 });
 
 // Create some collection from TCG pokémkon api
-initCollections();
+// initCollections();
 
 
 // api
@@ -38,6 +38,10 @@ app.post('/mintCard', mintCard);
 app.get('/getUserCardsByCollection/:collectionId/:user', getUserCardsByCollection);
 // Route pour obtenir les collections avec cartes
 app.get('/getCollectionsWithCards', getCollectionsWithCards);
+
+app.get('/getCollectionsFromContract', getCollectionsFromContract);
+app.post('/createCollection', createCollectionWithCards);
+
 
 var port = process.env.PORT || 3001 ;
 

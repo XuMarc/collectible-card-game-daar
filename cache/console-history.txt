@@ -1,7 +1,0 @@
-exit
-quit
-});
-  value: ethers.utils.parseEther("10")  // envoie 10 ETH
-  to: "0xb5bd3d9f0B5b18df4F6900e03Ff245A564c56365",
-await sender.sendTransaction({
-const [sender] = await ethers.getSigners();

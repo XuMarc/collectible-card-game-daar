@@ -26,10 +26,12 @@ const { ethers, NonceManager } = require('ethers');
 
 // ABI de ton contrat Main
 const contract = require('../contracts/artifacts/src/Main.sol/Main.json');
-const mainContractAbi = contract.abi; // Assurez-vous que Main.json contient l'ABI du contrat
+const collection = require('../contracts/artifacts/src/Collection.sol/Collection.json');
 
+const mainContractAbi = contract.abi; // Assurez-vous que Main.json contient l'ABI du contrat
+const collectionContractAbi = collection.abi;
 // Adresse du contrat Main déployé
-const mainContractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+const mainContractAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
 
 // Configuration du fournisseur (Provider)
 const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545'); // Utilisez votre RPC provider (Hardhat, Infura, etc.)
@@ -176,7 +178,8 @@ const getCardById = async (req, res) => {
 /**
  * Users
  */
-//TODO
+
+
 
 
 const getCollectionsWithCards = async (req, res) => {
@@ -244,6 +247,59 @@ const getCardsByCollection = async (req, res) => {
     }
 };
 
+
+const getCollectionsFromContract = async (req, res) => {
+    try {
+        // Appel du contrat pour récupérer toutes les adresses des collections
+        const collectionsAddresses = await mainContract.getCollections();
+        console.log("getCollectionsFromContract : ", collectionsAddresses);
+
+        let collectionsWithCards = [];
+
+        // Pour chaque adresse de collection, interroger le contrat Collection pour obtenir les détails
+        for (const address of collectionsAddresses) {
+            const collectionContract = new ethers.Contract(address, collectionContractAbi, provider);
+            
+            const name = await collectionContract.collectionName();
+            const cardCount = await collectionContract.cardCount();
+            const cards = await collectionContract.getCards();
+            const id = await collectionContract.getId();
+            collectionsWithCards.push({
+                id: id,
+                name: name,
+                cardCount: cardCount,
+                cards: cards.map(card => ({
+                    id: card.id,
+                    name: card.name,
+                    uri: card.uri
+                }))
+            });
+            console.log("nTRUC : ",name,cardCount,cards);
+        }
+
+        res.json({ collections: collectionsWithCards });
+    } catch (err) {
+        console.error('Erreur lors de la récupération des collections depuis le contrat:', err);
+        res.status(500).send(err);
+    }
+};
+
+
+const getUsersCards = async (req, res) => {
+    try {
+        const { user } = req.params;
+        // Appel du contrat pour obtenir les cartes d'un utilisateur dans une collection
+        const userCards = await mainContract.getUserCards(user);
+
+        res.json({ cards: userCards });
+    } catch (err) {
+        console.error('Erreur lors de la récupération des cartes de l\'utilisateur:', err);
+        res.status(500).send(err);
+    }
+};
+
+
+
 /**
  * Mint une carte pour un utilisateur
  */
@@ -270,22 +326,47 @@ const mintCard = async (req, res) => {
     }
 };
 
-
-
-const createCollectionWithCards = async (collectionName, cards) => {
+// Création d'une collection et des cartes associées dans le contrat
+const createCollectionWithCards = async (req, res) => {
     try {
-        // On récupère juste les noms des cartes à partir des données de l'API
-        const cardNames = cards.map(card => card.name);
+        const { id, name } = req.body;
 
-        // Appel du contrat pour créer la collection et les cartes associées
-        const txCollection = await mainContract.createCollectionWithCards(collectionName, cards.length, cardNames);
-        await txCollection.wait();
+        // Appelle l'API Pokémon TCG pour récupérer les cartes de la collection
+        const cardsResponse = await axios.get(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}`);
+        const cards = cardsResponse.data.data;
 
-        console.log(`Collection ${collectionName} créée avec ${cards.length} cartes.`);
+        // Prépare un tableau de cartes à passer dans le contrat (ID, name, URI)
+        const cardsForContract = cards.map((card, index) => ({
+            id: index, // Utilisation de l'index comme identifiant numérique
+            name: card.name,
+            uri: card.images.large // URL de l'image
+        }));
+
+        // Appel du contrat pour créer la collection avec les cartes
+        const tx = await mainContract.createCollectionWithCards(id, name, cardsForContract.length, cardsForContract);
+        const receipt = await tx.wait();
+
+        res.json({ message: `Collection ${name} créée avec succès dans le contrat et voici la data : ${receipt}` });
     } catch (err) {
         console.error('Erreur lors de la création de la collection et des cartes:', err);
+        res.status(500).json({ error: 'Erreur lors de la création de la collection et des cartes.' });
     }
 };
+
+// const createCollectionWithCards = async (collectionName, cards) => {
+//     try {
+//         // On récupère juste les noms des cartes à partir des données de l'API
+//         const cardNames = cards.map(card => card.name);
+
+//         // Appel du contrat pour créer la collection et les cartes associées
+//         const txCollection = await mainContract.createCollectionWithCards(collectionName, cards.length, cardNames);
+//         await txCollection.wait();
+
+//         console.log(`Collection ${collectionName} créée avec ${cards.length} cartes.`);
+//     } catch (err) {
+//         console.error('Erreur lors de la création de la collection et des cartes:', err);
+//     }
+// };
 
 // Exemple d'appel à cette fonction
 const initCollections = async () => {
@@ -352,6 +433,8 @@ module.exports = {
     createCollectionWithCards,
     getUserCardsByCollection,
     getCollectionsWithCards,
-    getMaxMintForCard
+    getMaxMintForCard,
+    getCollectionsFromContract,
+    getUsersCards
 };
 

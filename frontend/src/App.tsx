@@ -8,6 +8,7 @@ import HomePage from './components/HomePage'
 import CollectionsPage from './components/CollectionsPage'
 import CollectionCardsPage from './components/CollectionCardsPage'
 import MintCardPage from './components/MintCardPage'
+import UsersPage from './components/UsersPage'
 
 type Canceler = () => void
 const useAffect = (
@@ -75,6 +76,7 @@ export const App = () => {
         />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/users" element={<UsersPage users={users}/>} /> 
           <Route path="/collections" element={<CollectionsPage />} />
           <Route path="/collections/:id" element={<CollectionCardsPage />} />
           <Route path="/mint" element={<MintCardPage users={users} />} />
