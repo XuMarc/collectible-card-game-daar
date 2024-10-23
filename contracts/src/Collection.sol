@@ -18,7 +18,7 @@ contract Collection is ERC721URIStorage, Ownable {
     }
 
     Card[] public cards; // Tableau de cartes dans cette collection
-    mapping(address => uint256[]) public usersTokens;
+    // mapping(address => uint256[]) public usersTokens;
 
     constructor(
         string memory _id,
@@ -43,16 +43,16 @@ contract Collection is ERC721URIStorage, Ownable {
         _setTokenURI(newCardId, _tokenURI);
 
         // Assigner le token à l'utilisateur
-        usersTokens[to].push(newCardId);
+        // usersTokens[to].push(newCardId);
 
         console.log("Minted : ", _tokenURI, newCardId);
         return newCardId;
     }
 
     // Obtenir les tokens d'un utilisateur
-    function getUserTokens(address user) external view returns (uint256[] memory) {
-        return usersTokens[user];
-    }
+    // function getUserTokens(address user) external view returns (uint256[] memory) {
+    //     return usersTokens[user];
+    // }
 
     // Obtenir toutes les cartes de la collection
     function getCards() public view returns (Card[] memory) {
@@ -63,13 +63,12 @@ contract Collection is ERC721URIStorage, Ownable {
         return id;
     }
 
-
     // Override pour assurer la compatibilité
     function supportsInterface(bytes4 interfaceId) public view override(ERC721URIStorage) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "http://localhost:3030/getCard/";
+        return "http://localhost:3001/";
     }
 }

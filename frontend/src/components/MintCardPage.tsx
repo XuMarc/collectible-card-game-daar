@@ -58,10 +58,9 @@ const MintCardPage = ({ users }: { users: string[] }) => {
 
   useEffect(() => {
     if (selectedCard) {
-
-      handleMint();
+      handleMint()
     }
-  }, [selectedCard]);
+  }, [selectedCard])
 
   //   const handleMint = () => {
   //     if (!selectedUser || !selectedCard || !selectedCollection) {
@@ -141,8 +140,7 @@ const MintCardPage = ({ users }: { users: string[] }) => {
       )
       return
     }
-    console.log("HERE2222 : ",selectedCard,selectedCollection,selectedUser);
-
+    console.log('HERE2222 : ', selectedCard, selectedCollection, selectedUser)
 
     try {
       // Vérifiez si MetaMask est disponible
@@ -163,235 +161,301 @@ const MintCardPage = ({ users }: { users: string[] }) => {
         // const mainContractAbi = contract.abi; // Assurez-vous que Main.json contient l'ABI du contrat
         let abi = [
           {
-            inputs: [],
-            stateMutability: 'nonpayable',
-            type: 'constructor',
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
           },
           {
-            inputs: [
+            "inputs": [
               {
-                internalType: 'address',
-                name: 'owner',
-                type: 'address',
-              },
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+              }
             ],
-            name: 'OwnableInvalidOwner',
-            type: 'error',
+            "name": "OwnableInvalidOwner",
+            "type": "error"
           },
           {
-            inputs: [
+            "inputs": [
               {
-                internalType: 'address',
-                name: 'account',
-                type: 'address',
-              },
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+              }
             ],
-            name: 'OwnableUnauthorizedAccount',
-            type: 'error',
+            "name": "OwnableUnauthorizedAccount",
+            "type": "error"
           },
           {
-            anonymous: false,
-            inputs: [
+            "anonymous": false,
+            "inputs": [
               {
-                indexed: false,
-                internalType: 'string',
-                name: 'name',
-                type: 'string',
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
               },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+              }
             ],
-            name: 'CollectionCreated',
-            type: 'event',
+            "name": "OwnershipTransferred",
+            "type": "event"
           },
           {
-            anonymous: false,
-            inputs: [
+            "inputs": [
               {
-                indexed: true,
-                internalType: 'address',
-                name: 'previousOwner',
-                type: 'address',
+                "internalType": "string",
+                "name": "id",
+                "type": "string"
               },
               {
-                indexed: true,
-                internalType: 'address',
-                name: 'newOwner',
-                type: 'address',
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
               },
+              {
+                "internalType": "uint256",
+                "name": "cardCount",
+                "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "id",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "uri",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Collection.Card[]",
+                "name": "_cards",
+                "type": "tuple[]"
+              }
             ],
-            name: 'OwnershipTransferred',
-            type: 'event',
+            "name": "createCollectionWithCards",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
           },
           {
-            anonymous: false,
-            inputs: [
+            "inputs": [
               {
-                indexed: false,
-                internalType: 'uint256',
-                name: 'id',
-                type: 'uint256',
-              },
+                "internalType": "string",
+                "name": "id",
+                "type": "string"
+              }
             ],
-            name: 'TOKENID',
-            type: 'event',
+            "name": "getCardsInCollection",
+            "outputs": [
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "id",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "uri",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Collection.Card[]",
+                "name": "",
+                "type": "tuple[]"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
           },
           {
-            inputs: [
+            "inputs": [
               {
-                internalType: 'string',
-                name: 'id',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'name',
-                type: 'string',
-              },
-              {
-                internalType: 'uint256',
-                name: 'cardCount',
-                type: 'uint256',
-              },
+                "internalType": "string",
+                "name": "id",
+                "type": "string"
+              }
             ],
-            name: 'createCollectionWithCards',
-            outputs: [],
-            stateMutability: 'nonpayable',
-            type: 'function',
+            "name": "getCollectionById",
+            "outputs": [
+              {
+                "internalType": "contract Collection",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
           },
           {
-            inputs: [
+            "inputs": [],
+            "name": "getCollections",
+            "outputs": [
               {
-                internalType: 'int256',
-                name: 'collectionId',
-                type: 'int256',
-              },
-              {
-                internalType: 'address',
-                name: 'user',
-                type: 'address',
-              },
+                "internalType": "contract Collection[]",
+                "name": "",
+                "type": "address[]"
+              }
             ],
-            name: 'getUserCards',
-            outputs: [
-              {
-                internalType: 'uint256[]',
-                name: '',
-                type: 'uint256[]',
-              },
-            ],
-            stateMutability: 'view',
-            type: 'function',
+            "stateMutability": "view",
+            "type": "function"
           },
           {
-            inputs: [],
-            name: 'getUsers',
-            outputs: [
+            "inputs": [
               {
-                internalType: 'address[]',
-                name: '',
-                type: 'address[]',
-              },
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+              }
             ],
-            stateMutability: 'view',
-            type: 'function',
+            "name": "getUserCardsDetailed",
+            "outputs": [
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "id",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "uri",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Collection.Card[]",
+                "name": "",
+                "type": "tuple[]"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
           },
           {
-            inputs: [
+            "inputs": [
               {
-                internalType: 'string',
-                name: 'collectionId',
-                type: 'string',
+                "internalType": "string",
+                "name": "collectionId",
+                "type": "string"
               },
               {
-                internalType: 'address',
-                name: 'to',
-                type: 'address',
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
               },
               {
-                internalType: 'string',
-                name: 'tokenURI',
-                type: 'string',
-              },
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "id",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "name",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "uri",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Collection.Card",
+                "name": "card",
+                "type": "tuple"
+              }
             ],
-            name: 'mint',
-            outputs: [
+            "name": "mint",
+            "outputs": [
               {
-                internalType: 'uint256',
-                name: '',
-                type: 'uint256',
-              },
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
             ],
-            stateMutability: 'nonpayable',
-            type: 'function',
+            "stateMutability": "nonpayable",
+            "type": "function"
           },
           {
-            inputs: [],
-            name: 'owner',
-            outputs: [
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
               {
-                internalType: 'address',
-                name: '',
-                type: 'address',
-              },
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
             ],
-            stateMutability: 'view',
-            type: 'function',
+            "stateMutability": "view",
+            "type": "function"
           },
           {
-            inputs: [],
-            name: 'renounceOwnership',
-            outputs: [],
-            stateMutability: 'nonpayable',
-            type: 'function',
+            "inputs": [],
+            "name": "renounceOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
           },
           {
-            inputs: [
+            "inputs": [
               {
-                internalType: 'address',
-                name: 'newOwner',
-                type: 'address',
-              },
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+              }
             ],
-            name: 'transferOwnership',
-            outputs: [],
-            stateMutability: 'nonpayable',
-            type: 'function',
-          },
-          {
-            inputs: [
-              {
-                internalType: 'uint256',
-                name: '',
-                type: 'uint256',
-              },
-            ],
-            name: 'users',
-            outputs: [
-              {
-                internalType: 'address',
-                name: '',
-                type: 'address',
-              },
-            ],
-            stateMutability: 'view',
-            type: 'function',
-          },
+            "name": "transferOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          }
         ]
         // Adresse du contrat Main déployé
         const mainContract = new ethers.Contract(
-          '0x5fbdb2315678afecb367f032d93f642f64180aa3',
+          '0x5FbDB2315678afecb367f032d93F642f64180aa3',
           abi,
           signer
         )
 
-        console.log("JUST BEFORE CALL TO MAINCONTRACT : COLLID,USER,CARDURI:",selectedCollection.id, selectedUser,selectedCard.uri);
-        // Appeler la fonction de mint sur le contrat
-        const tx = await mainContract.mint(
+        console.log(
+          'JUST BEFORE CALL TO MAINCONTRACT : COLLID,USER,CARDURI:',
           selectedCollection.id,
           selectedUser,
-          selectedCard.uri
+          selectedCard
+        )
+        // Appeler la fonction de mint sur le contrat
+        const tx = await mainContract.mint(
+          selectedCollection.id, // Identifiant de la collection
+          selectedUser, // Adresse de l'utilisateur
+          selectedCard
         )
 
-        console.log("passed everything so far2");
+        console.log('passed everything so far2')
 
         // Attendre que la transaction soit confirmée
         await tx.wait()

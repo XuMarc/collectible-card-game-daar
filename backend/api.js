@@ -31,7 +31,7 @@ const collection = require('../contracts/artifacts/src/Collection.sol/Collection
 const mainContractAbi = contract.abi; // Assurez-vous que Main.json contient l'ABI du contrat
 const collectionContractAbi = collection.abi;
 // Adresse du contrat Main déployé
-const mainContractAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
+const mainContractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 // Configuration du fournisseur (Provider)
 const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545'); // Utilisez votre RPC provider (Hardhat, Infura, etc.)
@@ -285,11 +285,11 @@ const getCollectionsFromContract = async (req, res) => {
 };
 
 
-const getUsersCards = async (req, res) => {
+const getUserCards = async (req, res) => {
     try {
         const { user } = req.params;
         // Appel du contrat pour obtenir les cartes d'un utilisateur dans une collection
-        const userCards = await mainContract.getUserCards(user);
+        const userCards = await mainContract.getUserCardsDetailed(user);
 
         res.json({ cards: userCards });
     } catch (err) {
@@ -435,6 +435,6 @@ module.exports = {
     getCollectionsWithCards,
     getMaxMintForCard,
     getCollectionsFromContract,
-    getUsersCards
+    getUserCards
 };
 
