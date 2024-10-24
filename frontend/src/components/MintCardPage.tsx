@@ -11,6 +11,7 @@ interface Card {
 interface Collection {
   id: string
   name: string
+  logo: string
   cards: Card[]
 }
 
@@ -20,7 +21,7 @@ declare global {
   }
 }
 
-const MintCardPage = ({ users }: { users: string[] }) => {
+const MintCardPage = (props: any) => {
   const [selectedUser, setSelectedUser] = useState<string>('')
   const [collections, setCollections] = useState<Collection[]>([])
   const [selectedCollection, setSelectedCollection] =
@@ -476,77 +477,71 @@ const MintCardPage = ({ users }: { users: string[] }) => {
   }
 
   return (
-    <div>
-      <h2>Mint une carte</h2>
-
-      <div>
-        <h3>Sélectionnez un utilisateur :</h3>
+    <div className="p-6 bg-gray-800 min-h-screen text-white">
+      <h2 className="text-3xl font-bold mb-6 text-center">Mint une carte</h2>
+  
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-2">Sélectionnez un utilisateur :</h3>
         <select
           value={selectedUser}
           onChange={e => setSelectedUser(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded bg-gray-700 text-white focus:outline-none"
         >
           <option value="">Sélectionnez un utilisateur</option>
-          {users.map(user => (
-            <option key={user} value={user}>
+          {props.users.map(user => (
+            <option key={user} value={user} className="bg-gray-700">
               {user}
             </option>
           ))}
         </select>
       </div>
-
-      <div>
-        <h3>Collections disponibles :</h3>
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+  
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-4">Collections disponibles :</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {collections.map(collection => (
             <div
               key={collection.id}
-              style={{
-                border: '1px solid #ddd',
-                padding: '20px',
-                margin: '10px',
-                width: '300px',
-                cursor: 'pointer',
-                textAlign: 'center',
-              }}
+              className="border border-gray-300 rounded-lg p-4 h-64 cursor-pointer text-center bg-gray-700 transition-transform hover:scale-105"
               onClick={() => setSelectedCollection(collection)}
             >
-              <h4>{collection.name}</h4>
+              <h4 className="text-lg font-medium mb-2 h-12 overflow-hidden">{collection.name}</h4>
               {collection.cards.length > 0 && (
-                <img
-                  src={collection.cards[0].uri}
-                  alt={collection.name}
-                  style={{ width: '100%', height: 'auto' }}
-                />
+                <div className="flex justify-center">
+                  <img
+                    src={collection.logo}
+                    alt={collection.name}
+                    className="object-contain w-32 h-32"
+                  />
+                </div>
               )}
             </div>
           ))}
         </div>
       </div>
-
+  
       {selectedCollection && (
-        <div>
-          <h3>Cartes dans la collection : {selectedCollection.name}</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-4">
+            Cartes dans la collection : {selectedCollection.name}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {selectedCollection.cards.map(card => (
               <div
                 key={card.id}
-                style={{
-                  border: '1px solid #ddd',
-                  padding: '20px',
-                  margin: '10px',
-                  width: '200px',
-                  textAlign: 'center',
-                }}
+                className="border border-gray-300 rounded-lg p-4 h-64 bg-gray-700 text-center transition-transform hover:scale-105"
               >
-                <h4>{card.name}</h4>
-                <img
-                  src={card.uri}
-                  alt={card.name}
-                  style={{ width: '100%', height: 'auto' }}
-                />
+                <h4 className="text-lg font-medium mb-2 h-12 overflow-hidden">{card.name}</h4>
+                <div className="flex justify-center">
+                  <img
+                    src={card.uri}
+                    alt={card.name}
+                    className="object-contain w-24 h-24"
+                  />
+                </div>
                 <button
                   onClick={() => setSelectedCard(card)}
-                  style={{ marginTop: '10px' }}
+                  className="bg-yellow-500 text-gray-800 py-2 px-4 rounded-lg shadow-lg hover:bg-yellow-400 transition duration-300 mt-2"
                 >
                   Mint {card.name}
                 </button>
@@ -555,10 +550,12 @@ const MintCardPage = ({ users }: { users: string[] }) => {
           </div>
         </div>
       )}
-
-      {message && <p>{message}</p>}
+  
+      {message && <p className="mt-4 text-green-500">{message}</p>}
     </div>
-  )
+  );
+  
+  
 }
 
 export default MintCardPage

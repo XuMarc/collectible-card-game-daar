@@ -8,6 +8,7 @@ import "hardhat/console.sol";
 
 contract Collection is ERC721URIStorage, Ownable {
     string public collectionName;
+    string public img;
     uint public cardCount; // Nombre total de cartes dans la collection
     uint256 private tokenIds;
     string public id;
@@ -24,11 +25,13 @@ contract Collection is ERC721URIStorage, Ownable {
         string memory _id,
         address owner, 
         string memory _name, 
+        string memory _img,
         uint _cardCount, 
         Card[] memory _cards
     ) Ownable(owner) ERC721(_name, "TCG") {
         id = _id;
         collectionName = _name;
+        img = _img;
         cardCount = _cardCount;
         for (uint i = 0; i < _cards.length; i++) {
             cards.push(_cards[i]);
@@ -70,5 +73,8 @@ contract Collection is ERC721URIStorage, Ownable {
 
     function _baseURI() internal pure override returns (string memory) {
         return "http://localhost:3001/";
+    }
+    function getLogo() public view returns (string memory) {
+        return img;
     }
 }

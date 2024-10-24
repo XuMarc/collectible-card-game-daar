@@ -21,6 +21,7 @@ contract Main is Ownable {
   function createCollectionWithCards(
     string calldata id,
     string calldata name,
+    string calldata img,
     uint cardCount,
     Collection.Card[] memory _cards
   ) external onlyOwner {
@@ -31,6 +32,7 @@ contract Main is Ownable {
       id,
       address(this),
       name,
+      img,
       cardCount,
       _cards
     );

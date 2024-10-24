@@ -261,12 +261,14 @@ const getCollectionsFromContract = async (req, res) => {
             const collectionContract = new ethers.Contract(address, collectionContractAbi, provider);
             
             const name = await collectionContract.collectionName();
+            const img = await collectionContract.getLogo();
             const cardCount = await collectionContract.cardCount();
             const cards = await collectionContract.getCards();
             const id = await collectionContract.getId();
             collectionsWithCards.push({
                 id: id,
                 name: name,
+                logo: img,
                 cardCount: cardCount,
                 cards: cards.map(card => ({
                     id: card.id,
@@ -274,7 +276,6 @@ const getCollectionsFromContract = async (req, res) => {
                     uri: card.uri
                 }))
             });
-            console.log("nTRUC : ",name,cardCount,cards);
         }
 
         res.json({ collections: collectionsWithCards });
@@ -329,7 +330,7 @@ const mintCard = async (req, res) => {
 // Création d'une collection et des cartes associées dans le contrat
 const createCollectionWithCards = async (req, res) => {
     try {
-        const { id, name } = req.body;
+        const { id, name, img } = req.body;
 
         // Appelle l'API Pokémon TCG pour récupérer les cartes de la collection
         const cardsResponse = await axios.get(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}`);
@@ -343,7 +344,7 @@ const createCollectionWithCards = async (req, res) => {
         }));
 
         // Appel du contrat pour créer la collection avec les cartes
-        const tx = await mainContract.createCollectionWithCards(id, name, cardsForContract.length, cardsForContract);
+        const tx = await mainContract.createCollectionWithCards(id, name, img, cardsForContract.length, cardsForContract);
         const receipt = await tx.wait();
 
         res.json({ message: `Collection ${name} créée avec succès dans le contrat et voici la data : ${receipt}` });

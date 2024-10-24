@@ -26,7 +26,7 @@
     "dotenv": "^16.0.3",
     "ethereum-waffle": "^3.4.4",
     "ethers": "^5.7.0",
-    "hardhat": "^2.16.0",
+    "hardhat": "^2.22.14",
     "hardhat-deploy": "^0.11.18",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "hardhat-gas-reporter": "^1.0.9",
