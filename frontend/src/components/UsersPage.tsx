@@ -24,6 +24,7 @@ const Users = (props: any) => {
       
       // Supposons que la réponse contienne un tableau de cartes directement
       setUserCards(response.data.cards);
+      console.log("FETCHED CARDS /USERS : ",response.data.cards);
     } catch (error) {
       console.error('Erreur lors de la récupération des cartes de l\'utilisateur:', error);
       setMessage('Erreur lors de la récupération des cartes.');
@@ -37,13 +38,13 @@ const Users = (props: any) => {
     }
   }, [selectedUser]);
 
-  const mapCardData = (cardArray: any[]) => {
-    return {
-      id: cardArray[0].hex, // Accès à l'ID (BigNumber)
-      name: cardArray[1],   // Nom de la carte
-      uri: cardArray[2],    // URI de la carte
-    };
-  };
+  // const mapCardData = (cardArray: any[]) => {
+  //   return {
+  //     id: cardArray[0].hex, // Accès à l'ID (BigNumber)
+  //     name: cardArray[1],   // Nom de la carte
+  //     uri: cardArray[2],    // URI de la carte
+  //   };
+  // };
   
   return (
     <div className="users-page bg-gray-800 min-h-screen flex flex-col items-center justify-center text-center p-8 text-white">

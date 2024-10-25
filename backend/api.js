@@ -259,7 +259,7 @@ const getCollectionsFromContract = async (req, res) => {
         // Pour chaque adresse de collection, interroger le contrat Collection pour obtenir les détails
         for (const address of collectionsAddresses) {
             const collectionContract = new ethers.Contract(address, collectionContractAbi, provider);
-            
+
             const name = await collectionContract.collectionName();
             const img = await collectionContract.getLogo();
             const cardCount = await collectionContract.cardCount();
@@ -423,6 +423,39 @@ const getMaxMintForCard = async (cardName) => {
     }
 };
 
+const createBooster = async (req, res) => {
+    try {
+        const { user } = req.body;
+
+        // Récupération des cartes depuis l'API Pokémon TCG
+        const response = await axios.get('https://api.pokemontcg.io/v2/cards');
+        const allCards = response.data.data;
+
+        // Sélection de 10 cartes au hasard
+        const shuffledCards = allCards.sort(() => 0.5 - Math.random());
+        const selectedCards = shuffledCards.slice(0, 10);
+
+        // Conversion des cartes au format approprié pour le contrat Booster
+        const formattedCards = selectedCards.map((card, index) => ({
+            id: index,
+            name: card.name,
+            uri: card.images.large // URL de l'image
+        }));
+
+        console.log("THERE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>HERE",user,formattedCards);
+        // Appel du contrat principal pour créer un booster
+        const tx = await mainContract.createBooster(user, formattedCards,  { gasLimit: ethers.utils.parseUnits("1000000", "wei") });
+        const receipt = await tx.wait();
+
+        res.json({ message: `Booster créé avec succès pour l'utilisateur ${user}`, receipt });
+    } catch (err) {
+        console.error('Erreur lors de la création du booster:', err);
+        res.status(500).send(err);
+    }
+};
+
+
+
 module.exports = {
     getCollections,
     getCollectionById,
@@ -436,6 +469,7 @@ module.exports = {
     getCollectionsWithCards,
     getMaxMintForCard,
     getCollectionsFromContract,
-    getUserCards
+    getUserCards,
+    createBooster
 };
 

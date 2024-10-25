@@ -7,74 +7,75 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "hardhat/console.sol";
 
 contract Collection is ERC721URIStorage, Ownable {
-    string public collectionName;
-    string public img;
-    uint public cardCount; // Nombre total de cartes dans la collection
-    uint256 private tokenIds;
-    string public id;
-    struct Card {
-        uint256 id;
-        string name;
-        string uri; // URL de l'image de la carte
+  string public collectionName;
+  string public img;
+  uint public cardCount; // Nombre total de cartes dans la collection
+  uint256 private tokenIds;
+  string public id;
+  struct Card {
+    uint256 id;
+    string name;
+    string uri; // URL de l'image de la carte
+  }
+
+  Card[] public cards; // Tableau de cartes dans cette collection
+  // mapping(address => uint256[]) public usersTokens;
+
+  constructor(
+    string memory _id,
+    address owner,
+    string memory _name,
+    string memory _img,
+    uint _cardCount,
+    Card[] memory _cards
+  ) Ownable(owner) ERC721(_name, "TCG") {
+    id = _id;
+    collectionName = _name;
+    img = _img;
+    cardCount = _cardCount;
+    for (uint i = 0; i < _cards.length; i++) {
+      cards.push(_cards[i]);
     }
+  }
 
-    Card[] public cards; // Tableau de cartes dans cette collection
-    // mapping(address => uint256[]) public usersTokens;
+  // Mint une carte
+  function mintCard(
+    address to,
+    string memory _tokenURI
+  ) public onlyOwner returns (uint256) {
+    tokenIds++;
+    uint256 newCardId = tokenIds;
+    _mint(to, newCardId);
+    _setTokenURI(newCardId, _tokenURI);
 
-    constructor(
-        string memory _id,
-        address owner, 
-        string memory _name, 
-        string memory _img,
-        uint _cardCount, 
-        Card[] memory _cards
-    ) Ownable(owner) ERC721(_name, "TCG") {
-        id = _id;
-        collectionName = _name;
-        img = _img;
-        cardCount = _cardCount;
-        for (uint i = 0; i < _cards.length; i++) {
-            cards.push(_cards[i]);
-        }
-    }
+    // Assigner le token à l'utilisateur
+    // usersTokens[to].push(newCardId);
 
-    // Mint une carte
-    function mintCard(address to, string memory _tokenURI) public onlyOwner returns (uint256) {
-        tokenIds++;
-        uint256 newCardId = tokenIds;
-        _mint(to, newCardId);
-        _setTokenURI(newCardId, _tokenURI);
+    console.log("Minted : ", _tokenURI, newCardId);
+    return newCardId;
+  }
 
-        // Assigner le token à l'utilisateur
-        // usersTokens[to].push(newCardId);
+  // Obtenir toutes les cartes de la collection
+  function getCards() public view returns (Card[] memory) {
+    return cards;
+  }
 
-        console.log("Minted : ", _tokenURI, newCardId);
-        return newCardId;
-    }
+  function getId() public view returns (string memory) {
+    return id;
+  }
 
-    // Obtenir les tokens d'un utilisateur
-    // function getUserTokens(address user) external view returns (uint256[] memory) {
-    //     return usersTokens[user];
-    // }
+  // Override pour assurer la compatibilité
+  function supportsInterface(
+    bytes4 interfaceId
+  ) public view override(ERC721URIStorage) returns (bool) {
+    return super.supportsInterface(interfaceId);
+  }
 
-    // Obtenir toutes les cartes de la collection
-    function getCards() public view returns (Card[] memory) {
-        return cards;
-    }
+  function _baseURI() internal pure override returns (string memory) {
+    return "http://localhost:3001/";
+  }
 
-    function getId() public view returns (string memory) {
-        return id;
-    }
-
-    // Override pour assurer la compatibilité
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721URIStorage) returns (bool) {
-        return super.supportsInterface(interfaceId);
-    }
-
-    function _baseURI() internal pure override returns (string memory) {
-        return "http://localhost:3001/";
-    }
-    function getLogo() public view returns (string memory) {
-        return img;
-    }
+  function getLogo() public view returns (string memory) {
+    return img;
+  }
 }

@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 
-const {getCollections, getCollectionById, getUserCards, createCollectionWithCards, getCollectionsFromContract, getCards, getCardById, getCollectionsWithCards, getUserCardsByCollection, getCardsByCollection, mintCard, initCollections} = require('./api')
+const {getCollections, createBooster, getCollectionById, getUserCards, createCollectionWithCards, getCollectionsFromContract, getCards, getCardById, getCollectionsWithCards, getUserCardsByCollection, getCardsByCollection, mintCard, initCollections} = require('./api')
 
 app.use(express.json());
 app.use(cors());
@@ -42,7 +42,9 @@ app.get('/getCollectionsWithCards', getCollectionsWithCards);
 app.get('/getCollectionsFromContract', getCollectionsFromContract);
 app.post('/createCollection', createCollectionWithCards);
 
+app.post('/createBooster', createBooster)
 app.get('/getUserCards/:user', getUserCards);
+app.post('/trade',)
 
 var port = process.env.PORT || 3001 ;
 

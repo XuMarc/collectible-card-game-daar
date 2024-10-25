@@ -162,279 +162,342 @@ const MintCardPage = (props: any) => {
         // const mainContractAbi = contract.abi; // Assurez-vous que Main.json contient l'ABI du contrat
         let abi = [
           {
-            "inputs": [],
-            "stateMutability": "nonpayable",
-            "type": "constructor"
+            inputs: [],
+            stateMutability: 'nonpayable',
+            type: 'constructor',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: 'owner',
+                type: 'address',
+              },
             ],
-            "name": "OwnableInvalidOwner",
-            "type": "error"
+            name: 'OwnableInvalidOwner',
+            type: 'error',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: 'account',
+                type: 'address',
+              },
             ],
-            "name": "OwnableUnauthorizedAccount",
-            "type": "error"
+            name: 'OwnableUnauthorizedAccount',
+            type: 'error',
           },
           {
-            "anonymous": false,
-            "inputs": [
+            anonymous: false,
+            inputs: [
               {
-                "indexed": true,
-                "internalType": "address",
-                "name": "previousOwner",
-                "type": "address"
+                indexed: true,
+                internalType: 'address',
+                name: 'previousOwner',
+                type: 'address',
               },
               {
-                "indexed": true,
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-              }
+                indexed: true,
+                internalType: 'address',
+                name: 'newOwner',
+                type: 'address',
+              },
             ],
-            "name": "OwnershipTransferred",
-            "type": "event"
+            name: 'OwnershipTransferred',
+            type: 'event',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "string",
-                "name": "id",
-                "type": "string"
+                internalType: 'address',
+                name: 'to',
+                type: 'address',
               },
               {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-              },
-              {
-                "internalType": "uint256",
-                "name": "cardCount",
-                "type": "uint256"
-              },
-              {
-                "components": [
+                components: [
                   {
-                    "internalType": "uint256",
-                    "name": "id",
-                    "type": "uint256"
+                    internalType: 'uint256',
+                    name: 'id',
+                    type: 'uint256',
                   },
                   {
-                    "internalType": "string",
-                    "name": "name",
-                    "type": "string"
+                    internalType: 'string',
+                    name: 'name',
+                    type: 'string',
                   },
                   {
-                    "internalType": "string",
-                    "name": "uri",
-                    "type": "string"
-                  }
+                    internalType: 'string',
+                    name: 'uri',
+                    type: 'string',
+                  },
                 ],
-                "internalType": "struct Collection.Card[]",
-                "name": "_cards",
-                "type": "tuple[]"
-              }
+                internalType: 'struct Collection.Card[]',
+                name: 'cards',
+                type: 'tuple[]',
+              },
             ],
-            "name": "createCollectionWithCards",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
+            name: 'createBooster',
+            outputs: [
+              {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+              },
+            ],
+            stateMutability: 'nonpayable',
+            type: 'function',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "string",
-                "name": "id",
-                "type": "string"
-              }
-            ],
-            "name": "getCardsInCollection",
-            "outputs": [
-              {
-                "components": [
-                  {
-                    "internalType": "uint256",
-                    "name": "id",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "string",
-                    "name": "name",
-                    "type": "string"
-                  },
-                  {
-                    "internalType": "string",
-                    "name": "uri",
-                    "type": "string"
-                  }
-                ],
-                "internalType": "struct Collection.Card[]",
-                "name": "",
-                "type": "tuple[]"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          },
-          {
-            "inputs": [
-              {
-                "internalType": "string",
-                "name": "id",
-                "type": "string"
-              }
-            ],
-            "name": "getCollectionById",
-            "outputs": [
-              {
-                "internalType": "contract Collection",
-                "name": "",
-                "type": "address"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          },
-          {
-            "inputs": [],
-            "name": "getCollections",
-            "outputs": [
-              {
-                "internalType": "contract Collection[]",
-                "name": "",
-                "type": "address[]"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          },
-          {
-            "inputs": [
-              {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
-              }
-            ],
-            "name": "getUserCardsDetailed",
-            "outputs": [
-              {
-                "components": [
-                  {
-                    "internalType": "uint256",
-                    "name": "id",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "string",
-                    "name": "name",
-                    "type": "string"
-                  },
-                  {
-                    "internalType": "string",
-                    "name": "uri",
-                    "type": "string"
-                  }
-                ],
-                "internalType": "struct Collection.Card[]",
-                "name": "",
-                "type": "tuple[]"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          },
-          {
-            "inputs": [
-              {
-                "internalType": "string",
-                "name": "collectionId",
-                "type": "string"
+                internalType: 'string',
+                name: 'id',
+                type: 'string',
               },
               {
-                "internalType": "address",
-                "name": "to",
-                "type": "address"
+                internalType: 'string',
+                name: 'name',
+                type: 'string',
               },
               {
-                "components": [
+                internalType: 'string',
+                name: 'img',
+                type: 'string',
+              },
+              {
+                internalType: 'uint256',
+                name: 'cardCount',
+                type: 'uint256',
+              },
+              {
+                components: [
                   {
-                    "internalType": "uint256",
-                    "name": "id",
-                    "type": "uint256"
+                    internalType: 'uint256',
+                    name: 'id',
+                    type: 'uint256',
                   },
                   {
-                    "internalType": "string",
-                    "name": "name",
-                    "type": "string"
+                    internalType: 'string',
+                    name: 'name',
+                    type: 'string',
                   },
                   {
-                    "internalType": "string",
-                    "name": "uri",
-                    "type": "string"
-                  }
+                    internalType: 'string',
+                    name: 'uri',
+                    type: 'string',
+                  },
                 ],
-                "internalType": "struct Collection.Card",
-                "name": "card",
-                "type": "tuple"
-              }
+                internalType: 'struct Collection.Card[]',
+                name: '_cards',
+                type: 'tuple[]',
+              },
             ],
-            "name": "mint",
-            "outputs": [
-              {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-              }
-            ],
-            "stateMutability": "nonpayable",
-            "type": "function"
+            name: 'createCollectionWithCards',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
           },
           {
-            "inputs": [],
-            "name": "owner",
-            "outputs": [
+            inputs: [
               {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-              }
+                internalType: 'uint256',
+                name: 'boosterId',
+                type: 'uint256',
+              },
             ],
-            "stateMutability": "view",
-            "type": "function"
+            name: 'getBoosterCards',
+            outputs: [
+              {
+                components: [
+                  {
+                    internalType: 'uint256',
+                    name: 'id',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'name',
+                    type: 'string',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'uri',
+                    type: 'string',
+                  },
+                ],
+                internalType: 'struct Collection.Card[]',
+                name: '',
+                type: 'tuple[]',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
           },
           {
-            "inputs": [],
-            "name": "renounceOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
+            inputs: [],
+            name: 'getCollections',
+            outputs: [
+              {
+                internalType: 'contract Collection[]',
+                name: '',
+                type: 'address[]',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
           },
           {
-            "inputs": [
+            inputs: [
               {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-              }
+                internalType: 'address',
+                name: 'user',
+                type: 'address',
+              },
             ],
-            "name": "transferOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-          }
+            name: 'getUserBoosters',
+            outputs: [
+              {
+                components: [
+                  {
+                    internalType: 'address',
+                    name: 'owner',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: 'boosterId',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'bool',
+                    name: 'claimed',
+                    type: 'bool',
+                  },
+                ],
+                internalType: 'struct Booster.BoosterPack[]',
+                name: '',
+                type: 'tuple[]',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
+          },
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: 'to',
+                type: 'address',
+              },
+            ],
+            name: 'getUserCardsDetailed',
+            outputs: [
+              {
+                components: [
+                  {
+                    internalType: 'uint256',
+                    name: 'id',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'name',
+                    type: 'string',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'uri',
+                    type: 'string',
+                  },
+                ],
+                internalType: 'struct Collection.Card[]',
+                name: '',
+                type: 'tuple[]',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
+          },
+          {
+            inputs: [
+              {
+                internalType: 'string',
+                name: 'collectionId',
+                type: 'string',
+              },
+              {
+                internalType: 'address',
+                name: 'to',
+                type: 'address',
+              },
+              {
+                components: [
+                  {
+                    internalType: 'uint256',
+                    name: 'id',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'name',
+                    type: 'string',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'uri',
+                    type: 'string',
+                  },
+                ],
+                internalType: 'struct Collection.Card',
+                name: 'card',
+                type: 'tuple',
+              },
+            ],
+            name: 'mint',
+            outputs: [
+              {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+              },
+            ],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+          {
+            inputs: [],
+            name: 'owner',
+            outputs: [
+              {
+                internalType: 'address',
+                name: '',
+                type: 'address',
+              },
+            ],
+            stateMutability: 'view',
+            type: 'function',
+          },
+          {
+            inputs: [],
+            name: 'renounceOwnership',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
+          {
+            inputs: [
+              {
+                internalType: 'address',
+                name: 'newOwner',
+                type: 'address',
+              },
+            ],
+            name: 'transferOwnership',
+            outputs: [],
+            stateMutability: 'nonpayable',
+            type: 'function',
+          },
         ]
         // Adresse du contrat Main déployé
         const mainContract = new ethers.Contract(
@@ -479,9 +542,11 @@ const MintCardPage = (props: any) => {
   return (
     <div className="p-6 bg-gray-800 min-h-screen text-white">
       <h2 className="text-3xl font-bold mb-6 text-center">Mint une carte</h2>
-  
+
       <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Sélectionnez un utilisateur :</h3>
+        <h3 className="text-xl font-semibold mb-2">
+          Sélectionnez un utilisateur :
+        </h3>
         <select
           value={selectedUser}
           onChange={e => setSelectedUser(e.target.value)}
@@ -495,9 +560,11 @@ const MintCardPage = (props: any) => {
           ))}
         </select>
       </div>
-  
+
       <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-4">Collections disponibles :</h3>
+        <h3 className="text-xl font-semibold mb-4">
+          Collections disponibles :
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {collections.map(collection => (
             <div
@@ -505,7 +572,9 @@ const MintCardPage = (props: any) => {
               className="border border-gray-300 rounded-lg p-4 h-64 cursor-pointer text-center bg-gray-700 transition-transform hover:scale-105"
               onClick={() => setSelectedCollection(collection)}
             >
-              <h4 className="text-lg font-medium mb-2 h-12 overflow-hidden">{collection.name}</h4>
+              <h4 className="text-lg font-medium mb-2 h-12 overflow-hidden">
+                {collection.name}
+              </h4>
               {collection.cards.length > 0 && (
                 <div className="flex justify-center">
                   <img
@@ -519,7 +588,7 @@ const MintCardPage = (props: any) => {
           ))}
         </div>
       </div>
-  
+
       {selectedCollection && (
         <div className="mb-6">
           <h3 className="text-xl font-semibold mb-4">
@@ -531,7 +600,9 @@ const MintCardPage = (props: any) => {
                 key={card.id}
                 className="border border-gray-300 rounded-lg p-4 h-64 bg-gray-700 text-center transition-transform hover:scale-105"
               >
-                <h4 className="text-lg font-medium mb-2 h-12 overflow-hidden">{card.name}</h4>
+                <h4 className="text-lg font-medium mb-2 h-12 overflow-hidden">
+                  {card.name}
+                </h4>
                 <div className="flex justify-center">
                   <img
                     src={card.uri}
@@ -550,12 +621,10 @@ const MintCardPage = (props: any) => {
           </div>
         </div>
       )}
-  
+
       {message && <p className="mt-4 text-green-500">{message}</p>}
     </div>
-  );
-  
-  
+  )
 }
 
 export default MintCardPage
