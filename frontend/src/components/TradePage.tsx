@@ -1178,38 +1178,36 @@ const TradePage = ({ users }: { users: string[] }) => {
       )
     }
   }
-
   return (
-    <div>
-      <h2>Échanger des cartes</h2>
-
-      <div>
-        <h3>Sélectionnez le premier utilisateur :</h3>
-        <select value={userA} onChange={e => setUserA(e.target.value)}>
+    <div className="p-6 bg-gray-800 min-h-screen text-white">
+      <h2 className="text-3xl font-bold mb-6 text-center">Échanger des cartes</h2>
+  
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-2">Sélectionnez le premier utilisateur :</h3>
+        <select
+          value={userA}
+          onChange={e => setUserA(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded bg-gray-700 text-white focus:outline-none"
+        >
           <option value="">Sélectionnez un utilisateur</option>
           {users.map(user => (
-            <option key={user} value={user}>
+            <option key={user} value={user} className="bg-gray-700">
               {user}
             </option>
           ))}
         </select>
       </div>
-
+  
       {userA && userACards.length > 0 && (
-        <div>
-          <h3>Cartes de {userA}</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-4">Cartes de {userA}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {userACards.map(card => (
               <div
                 key={card[0].hex}
-                style={{
-                  margin: '10px',
-                  border: selectedCardsA.includes(card[0].hex)
-                    ? '2px solid blue'
-                    : '1px solid #ddd',
-                  padding: '10px',
-                  cursor: 'pointer',
-                }}
+                className={`border ${
+                  selectedCardsA.includes(card[0].hex) ? 'border-blue-500' : 'border-gray-300'
+                } rounded-lg p-4 cursor-pointer bg-gray-700 transition-transform hover:scale-105`}
                 onClick={() =>
                   handleCardSelection(
                     card[0].hex,
@@ -1218,45 +1216,46 @@ const TradePage = ({ users }: { users: string[] }) => {
                   )
                 }
               >
-                <img
-                  src={card[2]}
-                  alt="Card Image"
-                  style={{ width: '100px', height: 'auto' }}
-                />
-                <p>Token ID: {card[0].hex}</p>
+                <div className="flex justify-center">
+                  <img
+                    src={card[2]}
+                    alt="Card Image"
+                    className="h-48"
+                  />
+                </div>
+                <p className="text-center text-sm">Token ID: {card[0].hex}</p>
               </div>
             ))}
           </div>
         </div>
       )}
-
-      <div>
-        <h3>Sélectionnez le deuxième utilisateur :</h3>
-        <select value={userB} onChange={e => setUserB(e.target.value)}>
+  
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-2">Sélectionnez le deuxième utilisateur :</h3>
+        <select
+          value={userB}
+          onChange={e => setUserB(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded bg-gray-700 text-white focus:outline-none"
+        >
           <option value="">Sélectionnez un utilisateur</option>
           {users.map(user => (
-            <option key={user} value={user}>
+            <option key={user} value={user} className="bg-gray-700">
               {user}
             </option>
           ))}
         </select>
       </div>
-
+  
       {userB && userBCards.length > 0 && (
-        <div>
-          <h3>Cartes de {userB}</h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-4">Cartes de {userB}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {userBCards.map(card => (
               <div
-                key={card.id}
-                style={{
-                  margin: '10px',
-                  border: selectedCardsB.includes(card[0].hex)
-                    ? '2px solid green'
-                    : '1px solid #ddd',
-                  padding: '10px',
-                  cursor: 'pointer',
-                }}
+                key={card[0].hex}
+                className={`border ${
+                  selectedCardsB.includes(card[0].hex) ? 'border-green-500' : 'border-gray-300'
+                } rounded-lg p-4 cursor-pointer bg-gray-700 transition-transform hover:scale-105`}
                 onClick={() =>
                   handleCardSelection(
                     card[0].hex,
@@ -1265,18 +1264,20 @@ const TradePage = ({ users }: { users: string[] }) => {
                   )
                 }
               >
-                <img
-                  src={card[2]}
-                  alt="Card Image"
-                  style={{ width: '100px', height: 'auto' }}
-                />
-                <p>Token ID: {card[0].hex}</p>
+                <div className="flex justify-center">
+                  <img
+                    src={card[2]}
+                    alt="Card Image"
+                    className="h-48"
+                  />
+                </div>
+                <p className="text-center text-sm">Token ID: {card[0].hex}</p>
               </div>
             ))}
           </div>
         </div>
       )}
-
+  
       <button
         onClick={handleTrade}
         disabled={
@@ -1284,13 +1285,16 @@ const TradePage = ({ users }: { users: string[] }) => {
           !userB ||
           (selectedCardsA.length === 0 && selectedCardsB.length === 0)
         }
+        className="w-full bg-yellow-500 text-gray-800 py-3 px-6 rounded-lg shadow-lg hover:bg-yellow-400 transition duration-300"
       >
         Échanger les cartes
       </button>
-
-      {message && <p>{message}</p>}
+  
+      {message && <p className="mt-4 text-green-500">{message}</p>}
     </div>
-  )
+  );
+  
+  
 }
 
 export default TradePage

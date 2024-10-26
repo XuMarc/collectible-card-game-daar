@@ -54,10 +54,14 @@ function NavBar({
           >
             Mint
           </Link>
-          <Link className="brand-name" to="/booster">
+          <Link
+            className="text-xl font-bold hover:text-yellow-500 transition"
+            to="/booster">
             Boosters
           </Link>
-          <Link className="brand-name" to="/trade">
+          <Link 
+            className="text-xl font-bold hover:text-yellow-500 transition"
+            to="/trade">
             Trade Cards
           </Link>
         </div>

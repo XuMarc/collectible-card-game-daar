@@ -598,16 +598,16 @@ const MintCardPage = (props: any) => {
             {selectedCollection.cards.map(card => (
               <div
                 key={card.id}
-                className="border border-gray-300 rounded-lg p-4 h-64 bg-gray-700 text-center transition-transform hover:scale-105"
+                className="border border-gray-300 py-20 rounded-lg p-4 bg-gray-700 text-center transition-transform hover:scale-105"
               >
-                <h4 className="text-lg font-medium mb-2 h-12 overflow-hidden">
+                <h4 className="text-lg font-medium h-12 overflow-hidden">
                   {card.name}
                 </h4>
                 <div className="flex justify-center">
                   <img
                     src={card.uri}
                     alt={card.name}
-                    className="object-contain w-24 h-24"
+                    className="h-48"
                   />
                 </div>
                 <button
