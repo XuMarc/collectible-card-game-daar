@@ -14,7 +14,7 @@ function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [creatingCollection, setCreatingCollection] = useState<string | null>(
     null
-  ) // Suivi de la création
+  )
 
   useEffect(() => {
     axios

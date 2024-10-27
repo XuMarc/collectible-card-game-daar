@@ -13,16 +13,14 @@ interface Card {
 }
 
 const Users = (props: any) => {
-  const [selectedUser, setSelectedUser] = useState<string>(''); // Utilisateur sélectionné
+  const [selectedUser, setSelectedUser] = useState<string>(''); 
   const [userCards, setUserCards] = useState<Card[]>([]);
   const [message, setMessage] = useState<string>('');
 
   const fetchUserCards = async (user: string) => {
     try {
-      // Récupère les cartes d'un utilisateur
       const response = await axios.get(`http://localhost:3001/getUserCards/${user}`);
       
-      // Supposons que la réponse contienne un tableau de cartes directement
       setUserCards(response.data.cards);
       console.log("FETCHED CARDS /USERS : ",response.data.cards);
     } catch (error) {
@@ -33,19 +31,10 @@ const Users = (props: any) => {
 
   useEffect(() => {
     if (selectedUser) {
-      fetchUserCards(selectedUser); // Récupère les cartes lorsque l'utilisateur est sélectionné
-      // console.log("ADJKLZANFDKSLLD : ",userCards[0][1]);
+      fetchUserCards(selectedUser);
     }
   }, [selectedUser]);
 
-  // const mapCardData = (cardArray: any[]) => {
-  //   return {
-  //     id: cardArray[0].hex, // Accès à l'ID (BigNumber)
-  //     name: cardArray[1],   // Nom de la carte
-  //     uri: cardArray[2],    // URI de la carte
-  //   };
-  // };
-  
   return (
     <div className="users-page bg-gray-800 min-h-screen flex flex-col items-center justify-center text-center p-8 text-white">
       <h2 className="text-5xl font-bold mb-4">Utilisateurs</h2>

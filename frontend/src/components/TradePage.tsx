@@ -27,7 +27,6 @@ const TradePage = ({ users }: { users: string[] }) => {
       const response = await axios.get(
         `http://localhost:3001/getUserCards/${user}`
       )
-      // console.log('CARDS A : ', response.data.cards)
       setUserACards(response.data.cards)
     } catch (error) {
       console.error(
@@ -55,14 +54,12 @@ const TradePage = ({ users }: { users: string[] }) => {
   useEffect(() => {
     if (userA) {
       fetchUserCardsA(userA)
-      // console.log('UserA cards : ', userACards)
     }
   }, [userA])
 
   useEffect(() => {
     if (userB) {
       fetchUserCardsB(userB)
-      // console.log('UserB cards : ', userBCards)
     }
   }, [userB])
 
@@ -78,783 +75,6 @@ const TradePage = ({ users }: { users: string[] }) => {
     }
   }
 
-  const fetchCollections = async (mainContract: ethers.Contract
-  ) => {
-    try {
-      // Appel de la fonction getCollections pour obtenir les adresses des collections
-      const collectionAddresses = await mainContract.getCollections()
-
-      // Initialisez chaque collection avec son ABI et son adresse
-      let CollectionAbi = [
-        {
-          inputs: [
-            {
-              internalType: 'string',
-              name: '_id',
-              type: 'string',
-            },
-            {
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-            {
-              internalType: 'string',
-              name: '_name',
-              type: 'string',
-            },
-            {
-              internalType: 'string',
-              name: '_img',
-              type: 'string',
-            },
-            {
-              internalType: 'uint256',
-              name: '_cardCount',
-              type: 'uint256',
-            },
-            {
-              components: [
-                {
-                  internalType: 'uint256',
-                  name: 'id',
-                  type: 'uint256',
-                },
-                {
-                  internalType: 'string',
-                  name: 'name',
-                  type: 'string',
-                },
-                {
-                  internalType: 'string',
-                  name: 'uri',
-                  type: 'string',
-                },
-              ],
-              internalType: 'struct Collection.Card[]',
-              name: '_cards',
-              type: 'tuple[]',
-            },
-          ],
-          stateMutability: 'nonpayable',
-          type: 'constructor',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'sender',
-              type: 'address',
-            },
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-            {
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-          ],
-          name: 'ERC721IncorrectOwner',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'operator',
-              type: 'address',
-            },
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'ERC721InsufficientApproval',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'approver',
-              type: 'address',
-            },
-          ],
-          name: 'ERC721InvalidApprover',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'operator',
-              type: 'address',
-            },
-          ],
-          name: 'ERC721InvalidOperator',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-          ],
-          name: 'ERC721InvalidOwner',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'receiver',
-              type: 'address',
-            },
-          ],
-          name: 'ERC721InvalidReceiver',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'sender',
-              type: 'address',
-            },
-          ],
-          name: 'ERC721InvalidSender',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'ERC721NonexistentToken',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-          ],
-          name: 'OwnableInvalidOwner',
-          type: 'error',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'account',
-              type: 'address',
-            },
-          ],
-          name: 'OwnableUnauthorizedAccount',
-          type: 'error',
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'approved',
-              type: 'address',
-            },
-            {
-              indexed: true,
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'Approval',
-          type: 'event',
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'operator',
-              type: 'address',
-            },
-            {
-              indexed: false,
-              internalType: 'bool',
-              name: 'approved',
-              type: 'bool',
-            },
-          ],
-          name: 'ApprovalForAll',
-          type: 'event',
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: 'uint256',
-              name: '_fromTokenId',
-              type: 'uint256',
-            },
-            {
-              indexed: false,
-              internalType: 'uint256',
-              name: '_toTokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'BatchMetadataUpdate',
-          type: 'event',
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: 'uint256',
-              name: '_tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'MetadataUpdate',
-          type: 'event',
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'previousOwner',
-              type: 'address',
-            },
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'newOwner',
-              type: 'address',
-            },
-          ],
-          name: 'OwnershipTransferred',
-          type: 'event',
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'from',
-              type: 'address',
-            },
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'to',
-              type: 'address',
-            },
-            {
-              indexed: true,
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'Transfer',
-          type: 'event',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'to',
-              type: 'address',
-            },
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'approve',
-          outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-          ],
-          name: 'balanceOf',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'cardCount',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256',
-            },
-          ],
-          name: 'cards',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: 'id',
-              type: 'uint256',
-            },
-            {
-              internalType: 'string',
-              name: 'name',
-              type: 'string',
-            },
-            {
-              internalType: 'string',
-              name: 'uri',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'collectionName',
-          outputs: [
-            {
-              internalType: 'string',
-              name: '',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'getApproved',
-          outputs: [
-            {
-              internalType: 'address',
-              name: '',
-              type: 'address',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'getCards',
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: 'uint256',
-                  name: 'id',
-                  type: 'uint256',
-                },
-                {
-                  internalType: 'string',
-                  name: 'name',
-                  type: 'string',
-                },
-                {
-                  internalType: 'string',
-                  name: 'uri',
-                  type: 'string',
-                },
-              ],
-              internalType: 'struct Collection.Card[]',
-              name: '',
-              type: 'tuple[]',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'getId',
-          outputs: [
-            {
-              internalType: 'string',
-              name: '',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'getLogo',
-          outputs: [
-            {
-              internalType: 'string',
-              name: '',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'id',
-          outputs: [
-            {
-              internalType: 'string',
-              name: '',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'img',
-          outputs: [
-            {
-              internalType: 'string',
-              name: '',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-            {
-              internalType: 'address',
-              name: 'operator',
-              type: 'address',
-            },
-          ],
-          name: 'isApprovedForAll',
-          outputs: [
-            {
-              internalType: 'bool',
-              name: '',
-              type: 'bool',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'to',
-              type: 'address',
-            },
-            {
-              internalType: 'string',
-              name: '_tokenURI',
-              type: 'string',
-            },
-          ],
-          name: 'mintCard',
-          outputs: [
-            {
-              internalType: 'uint256',
-              name: '',
-              type: 'uint256',
-            },
-          ],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'name',
-          outputs: [
-            {
-              internalType: 'string',
-              name: '',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'owner',
-          outputs: [
-            {
-              internalType: 'address',
-              name: '',
-              type: 'address',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'ownerOf',
-          outputs: [
-            {
-              internalType: 'address',
-              name: '',
-              type: 'address',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'renounceOwnership',
-          outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'from',
-              type: 'address',
-            },
-            {
-              internalType: 'address',
-              name: 'to',
-              type: 'address',
-            },
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'safeTransferFrom',
-          outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'from',
-              type: 'address',
-            },
-            {
-              internalType: 'address',
-              name: 'to',
-              type: 'address',
-            },
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-            {
-              internalType: 'bytes',
-              name: 'data',
-              type: 'bytes',
-            },
-          ],
-          name: 'safeTransferFrom',
-          outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'operator',
-              type: 'address',
-            },
-            {
-              internalType: 'bool',
-              name: 'approved',
-              type: 'bool',
-            },
-          ],
-          name: 'setApprovalForAll',
-          outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'bytes4',
-              name: 'interfaceId',
-              type: 'bytes4',
-            },
-          ],
-          name: 'supportsInterface',
-          outputs: [
-            {
-              internalType: 'bool',
-              name: '',
-              type: 'bool',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [],
-          name: 'symbol',
-          outputs: [
-            {
-              internalType: 'string',
-              name: '',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'tokenURI',
-          outputs: [
-            {
-              internalType: 'string',
-              name: '',
-              type: 'string',
-            },
-          ],
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'from',
-              type: 'address',
-            },
-            {
-              internalType: 'address',
-              name: 'to',
-              type: 'address',
-            },
-            {
-              internalType: 'uint256',
-              name: 'tokenId',
-              type: 'uint256',
-            },
-          ],
-          name: 'transferFrom',
-          outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'newOwner',
-              type: 'address',
-            },
-          ],
-          name: 'transferOwnership',
-          outputs: [],
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-      ]
-      const collections = collectionAddresses.map((address: string) => {
-        return new ethers.Contract(
-          address,
-          CollectionAbi,
-          mainContract.provider
-        )
-      })
-
-      return collections
-    } catch (error) {
-      console.error('Erreur lors de la récupération des collections :', error)
-      return []
-    }
-  }
-
   const handleTrade = async () => {
     if (
       userA &&
@@ -862,15 +82,13 @@ const TradePage = ({ users }: { users: string[] }) => {
       (selectedCardsA.length > 0 || selectedCardsB.length > 0)
     ) {
       try {
-        // Vérifiez si MetaMask est disponible
         if (window.ethereum) {
           const provider = new ethers.providers.Web3Provider(window.ethereum)
 
-          // Demander à MetaMask la permission de se connecter
           await window.ethereum.request({ method: 'eth_requestAccounts' })
 
-          // Obtenir le signer (utilisateur connecté via MetaMask)
           const signer = provider.getSigner()
+
           let abi = [
             {
               inputs: [],
@@ -1127,27 +345,22 @@ const TradePage = ({ users }: { users: string[] }) => {
             signer
           )
 
-          // // Récupérez les collections et initialisez-les
-          // const collections = await fetchCollections(mainContract)
-
-          // // Donnez l'approbation pour que mainContract puisse transférer les tokens pour chaque collection
-          // for (const collection of collections) {
-          //   await collection
-          //     .connect(signer)
-          //     .setApprovalForAll(mainContract.address, true)
-          // }
           // Effectuer l'échange pour chaque carte sélectionnée
           const tradePromises = []
 
           // Échanger les cartes de userA à userB
           for (const cardIdA of selectedCardsA) {
-            const txA = mainContract.tradeCard(userA, userB, cardIdA,{ gasLimit: 300000 });
+            const txA = mainContract.tradeCard(userA, userB, cardIdA, {
+              gasLimit: 300000,
+            })
             tradePromises.push(txA)
           }
 
           // Échanger les cartes de userB à userA
           for (const cardIdB of selectedCardsB) {
-            const txB = mainContract.tradeCard(userB, userA, cardIdB, { gasLimit: 300000 });
+            const txB = mainContract.tradeCard(userB, userA, cardIdB, {
+              gasLimit: 300000,
+            })
             tradePromises.push(txB)
           }
 
@@ -1180,10 +393,14 @@ const TradePage = ({ users }: { users: string[] }) => {
   }
   return (
     <div className="p-6 bg-gray-800 min-h-screen text-white">
-      <h2 className="text-3xl font-bold mb-6 text-center">Échanger des cartes</h2>
-  
+      <h2 className="text-3xl font-bold mb-6 text-center">
+        Échanger des cartes
+      </h2>
+
       <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Sélectionnez le premier utilisateur :</h3>
+        <h3 className="text-xl font-semibold mb-2">
+          Sélectionnez le premier utilisateur :
+        </h3>
         <select
           value={userA}
           onChange={e => setUserA(e.target.value)}
@@ -1197,7 +414,7 @@ const TradePage = ({ users }: { users: string[] }) => {
           ))}
         </select>
       </div>
-  
+
       {userA && userACards.length > 0 && (
         <div className="mb-6">
           <h3 className="text-xl font-semibold mb-4">Cartes de {userA}</h3>
@@ -1206,7 +423,9 @@ const TradePage = ({ users }: { users: string[] }) => {
               <div
                 key={card[0].hex}
                 className={`border ${
-                  selectedCardsA.includes(card[0].hex) ? 'border-blue-500' : 'border-gray-300'
+                  selectedCardsA.includes(card[0].hex)
+                    ? 'border-blue-500'
+                    : 'border-gray-300'
                 } rounded-lg p-4 cursor-pointer bg-gray-700 transition-transform hover:scale-105`}
                 onClick={() =>
                   handleCardSelection(
@@ -1217,11 +436,7 @@ const TradePage = ({ users }: { users: string[] }) => {
                 }
               >
                 <div className="flex justify-center">
-                  <img
-                    src={card[2]}
-                    alt="Card Image"
-                    className="h-48"
-                  />
+                  <img src={card[2]} alt="Card Image" className="h-48" />
                 </div>
                 <p className="text-center text-sm">Token ID: {card[0].hex}</p>
               </div>
@@ -1229,9 +444,11 @@ const TradePage = ({ users }: { users: string[] }) => {
           </div>
         </div>
       )}
-  
+
       <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Sélectionnez le deuxième utilisateur :</h3>
+        <h3 className="text-xl font-semibold mb-2">
+          Sélectionnez le deuxième utilisateur :
+        </h3>
         <select
           value={userB}
           onChange={e => setUserB(e.target.value)}
@@ -1245,7 +462,7 @@ const TradePage = ({ users }: { users: string[] }) => {
           ))}
         </select>
       </div>
-  
+
       {userB && userBCards.length > 0 && (
         <div className="mb-6">
           <h3 className="text-xl font-semibold mb-4">Cartes de {userB}</h3>
@@ -1254,7 +471,9 @@ const TradePage = ({ users }: { users: string[] }) => {
               <div
                 key={card[0].hex}
                 className={`border ${
-                  selectedCardsB.includes(card[0].hex) ? 'border-green-500' : 'border-gray-300'
+                  selectedCardsB.includes(card[0].hex)
+                    ? 'border-green-500'
+                    : 'border-gray-300'
                 } rounded-lg p-4 cursor-pointer bg-gray-700 transition-transform hover:scale-105`}
                 onClick={() =>
                   handleCardSelection(
@@ -1265,11 +484,7 @@ const TradePage = ({ users }: { users: string[] }) => {
                 }
               >
                 <div className="flex justify-center">
-                  <img
-                    src={card[2]}
-                    alt="Card Image"
-                    className="h-48"
-                  />
+                  <img src={card[2]} alt="Card Image" className="h-48" />
                 </div>
                 <p className="text-center text-sm">Token ID: {card[0].hex}</p>
               </div>
@@ -1277,7 +492,7 @@ const TradePage = ({ users }: { users: string[] }) => {
           </div>
         </div>
       )}
-  
+
       <button
         onClick={handleTrade}
         disabled={
@@ -1289,12 +504,10 @@ const TradePage = ({ users }: { users: string[] }) => {
       >
         Échanger les cartes
       </button>
-  
+
       {message && <p className="mt-4 text-green-500">{message}</p>}
     </div>
-  );
-  
-  
+  )
 }
 
 export default TradePage

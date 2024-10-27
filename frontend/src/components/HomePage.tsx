@@ -36,14 +36,12 @@ function HomePage() {
             <h2 className="features-title text-4xl font-semibold mb-4">Fonctionnalités</h2>
             <ul className="features-list text-lg max-w-md mx-auto space-y-3 mb-10">
                 <li>🌟 **Recevez des NFT** : Le propriétaire peut mint des cartes pour les utilisateurs.</li>
-                <li>👁️ **Visualisez vos NFT** : Connectez-vous pour voir toutes les cartes que vous possédez.</li>
-                <li>📦 **Accédez aux métadonnées** : Récupérez toutes les informations détaillées sur vos NFT via notre API.</li>
+                <li>👁️ **Visualisez vos NFT** : Visualiser les cartes des utilisateurs.</li>
+                <li>📦 **Accédez aux métadonnées** : Récupérez toutes les informations détaillées des NFT via notre API.</li>
                 <li>📚 **Explorez les collections** : Découvrez les différents ensembles de cartes et les utilisateurs qui les possèdent.</li>
-            </ul>
+                <li>👥 **Échangez vos cartes** : Échangez avec d'autres utilisateurs vos cartes.</li>
 
-            <button className="get-started-button bg-yellow-500 text-gray-800 font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-yellow-400 transition duration-300">
-                Commencez votre aventure !
-            </button>
+            </ul>
         </div>
     );
 }

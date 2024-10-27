@@ -29,17 +29,6 @@ const MintCardPage = (props: any) => {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null)
   const [message, setMessage] = useState('')
 
-  // Récupère les collections avec les cartes associées
-  // useEffect(() => {
-  //   axios
-  //     .get('http://localhost:3001/getCollectionsWithCards')
-  //     .then(response => {
-  //       setCollections(response.data.collections)
-  //     })
-  //     .catch(error => {
-  //       console.error('Erreur lors de la récupération des collections:', error)
-  //     })
-  // }, [])
   useEffect(() => {
     const fetchCollections = async () => {
       try {
@@ -47,7 +36,6 @@ const MintCardPage = (props: any) => {
           'http://localhost:3001/getCollectionsFromContract'
         )
         setCollections(response.data.collections)
-        console.log('COLLECTIONS : ', response.data.collections)
       } catch (error) {
         console.error('Erreur lors de la récupération des collections:', error)
         setMessage('Erreur lors de la récupération des collections.')
@@ -63,77 +51,6 @@ const MintCardPage = (props: any) => {
     }
   }, [selectedCard])
 
-  //   const handleMint = () => {
-  //     if (!selectedUser || !selectedCard || !selectedCollection) {
-  //       setMessage(
-  //         'Veuillez sélectionner un utilisateur, une collection et une carte.'
-  //       )
-  //       return
-  //     }
-  //     console.log(
-  //       'handleMint : ',
-  //       selectedCollection.id,
-  //       selectedUser,
-  //       selectedCard.id
-  //     )
-  //     axios
-  //       .post('http://localhost:3001/mintCard', {
-  //         collectionId: selectedCollection.id,
-  //         user: selectedUser,
-  //         tokenURI: selectedCard.uri,
-  //       })
-  //       .then(response => {
-  //         setMessage(`Mint réussi : ${response.data.message}`)
-  //       })
-  //       .catch(err => {
-  //         setMessage(`Erreur lors du mint : ${err.response.data.message}`)
-  //       })
-  //   }
-
-  // const handleMint = async () => {
-  //   if (!selectedUser || !selectedCard || !selectedCollection) {
-  //     setMessage(
-  //       'Veuillez sélectionner un utilisateur, une collection et une carte.'
-  //     )
-  //     return
-  //   }
-
-  //   // Se connecter à MetaMask
-  //   try {
-  //     if (window.ethereum) {
-  //       const provider = new ethers.providers.Web3Provider(window.ethereum)
-  //       // Demander à MetaMask de se connecter
-  //       await provider.send('eth_requestAccounts', [])
-  //       const signer = provider.getSigner()
-  //       const userAddress = await signer.getAddress()
-
-  //       console.log('Minting with account:', userAddress)
-
-  //       // Appel au backend pour mint la carte (via MetaMask)
-  //       const tx = await axios.post('http://localhost:3001/mintCard', {
-  //         collectionId: selectedCollection.id,
-  //         user: userAddress, // Utilise l'adresse obtenue de MetaMask
-  //         tokenURI: selectedCard.uri,
-  //       })
-
-  //       setMessage(`Mint réussi : ${tx.data.message}`)
-  //     } else {
-  //       setMessage("MetaMask non détecté. Veuillez l'installer.")
-  //     }
-  //   } catch (err) {
-  //     // Affinement du type de 'err' pour qu'il soit typé comme une 'Error'
-  //     if (err instanceof Error) {
-  //       setMessage(
-  //         `Erreur lors de la connexion à MetaMask ou du mint : ${err.message}`
-  //       )
-  //       console.error('Erreur : ', err.message)
-  //     } else {
-  //       setMessage('Une erreur inconnue est survenue.')
-  //       console.error('Erreur inconnue : ', err)
-  //     }
-  //   }
-  // }
-
   const handleMint = async () => {
     if (!selectedUser || !selectedCard || !selectedCollection) {
       setMessage(
@@ -141,10 +58,8 @@ const MintCardPage = (props: any) => {
       )
       return
     }
-    console.log('HERE2222 : ', selectedCard, selectedCollection, selectedUser)
 
     try {
-      // Vérifiez si MetaMask est disponible
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
 
@@ -157,9 +72,6 @@ const MintCardPage = (props: any) => {
 
         console.log('Minting with account:', userAddress)
 
-        // Initialiser le contrat avec le signer de MetaMask
-        // const contract = require('../../contracts/artifacts/src/Main.sol/Main.json');
-        // const mainContractAbi = contract.abi; // Assurez-vous que Main.json contient l'ABI du contrat
         let abi = [
           {
             inputs: [],
@@ -499,29 +411,20 @@ const MintCardPage = (props: any) => {
             type: 'function',
           },
         ]
-        // Adresse du contrat Main déployé
+
         const mainContract = new ethers.Contract(
           '0x5FbDB2315678afecb367f032d93F642f64180aa3',
           abi,
           signer
         )
 
-        console.log(
-          'JUST BEFORE CALL TO MAINCONTRACT : COLLID,USER,CARDURI:',
-          selectedCollection.id,
-          selectedUser,
-          selectedCard
-        )
         // Appeler la fonction de mint sur le contrat
         const tx = await mainContract.mint(
-          selectedCollection.id, // Identifiant de la collection
-          selectedUser, // Adresse de l'utilisateur
+          selectedCollection.id,
+          selectedUser, 
           selectedCard
         )
 
-        console.log('passed everything so far2')
-
-        // Attendre que la transaction soit confirmée
         await tx.wait()
 
         setMessage('Mint réussi ! Transaction confirmée.')
@@ -553,7 +456,7 @@ const MintCardPage = (props: any) => {
           className="w-full p-3 border border-gray-300 rounded bg-gray-700 text-white focus:outline-none"
         >
           <option value="">Sélectionnez un utilisateur</option>
-          {props.users.map(user => (
+          {props.users.map((user: string) => (
             <option key={user} value={user} className="bg-gray-700">
               {user}
             </option>
@@ -604,11 +507,7 @@ const MintCardPage = (props: any) => {
                   {card.name}
                 </h4>
                 <div className="flex justify-center">
-                  <img
-                    src={card.uri}
-                    alt={card.name}
-                    className="h-48"
-                  />
+                  <img src={card.uri} alt={card.name} className="h-48" />
                 </div>
                 <button
                   onClick={() => setSelectedCard(card)}

@@ -20,9 +20,9 @@ function NavBar({
   const handleAddUser = () => {
     if (newUser) {
       addUser(newUser)
-      setSelectedUser(newUser) // Sélectionne l'utilisateur par défaut
+      setSelectedUser(newUser)
       setNewUser('')
-      setIsModalOpen(false) // Ferme le modal
+      setIsModalOpen(false)
     }
   }
 

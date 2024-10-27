@@ -8,9 +8,21 @@ contract Main is Ownable {
   Collection[] collectionsArray;
   mapping(address => Collection.Card[]) private usersCards;
 
-  constructor() Ownable(0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199) {
-    count = 1;
-  }
+  // uint256 private boosterIdCounter;
+  // mapping(uint256 => Booster) public boosters;
+  // mapping(uint256 => bool) public redeemedBoosters;
+
+
+  // struct Booster {
+  //   uint256 id;
+  //   address owner;
+  //   Collection.Card[] cards;
+  //   string boosterURI;
+  // }
+
+  constructor() Ownable(0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199) {}
+  // constructor() ERC721("BoosterNFT", "BSTR") Ownable(0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199) {}
+
 
   // Créer une collection avec les cartes associées
   function createCollectionWithCards(
@@ -44,7 +56,6 @@ contract Main is Ownable {
       ) {
         uint256 tokenId = collectionsArray[i].mintCard(to, card.uri);
 
-        // Ajoutez la carte à la liste des cartes de l'utilisateur
         usersCards[to].push(card);
 
         return tokenId;
@@ -66,69 +77,17 @@ contract Main is Ownable {
   // function tradeCard(
   //   address from,
   //   address to,
-  //   string calldata collectionId,
   //   uint256 cardId
   // ) external onlyOwner {
-  //   // Parcourir `collectionsArray` pour trouver la collection avec l'ID donné
-  //   for (uint i = 0; i < collectionsArray.length; i++) {
-  //     if (
-  //       keccak256(abi.encodePacked(collectionsArray[i].getId())) ==
-  //       keccak256(abi.encodePacked(collectionId))
-  //     ) {
-  //       // Vérifier que l'utilisateur `from` possède bien la carte
-  //       Collection.Card[] storage fromCards = usersCards[from];
-  //       bool cardFound = false;
-  //       uint cardIndex;
-
-  //       for (uint j = 0; j < fromCards.length; j++) {
-  //         if (fromCards[j].id == cardId) {
-  //           cardFound = true;
-  //           cardIndex = j;
-  //           break;
-  //         }
-  //       }
-
-  //       // Transférer le NFT dans le contrat `Collection`
-  //       collectionsArray[i].safeTransferFrom(from, to, cardId);
-
-  //       // Mettre à jour `usersCards`
-  //       usersCards[to].push(fromCards[cardIndex]);
-  //       fromCards[cardIndex] = fromCards[fromCards.length - 1];
+  //   Collection.Card[] storage fromCards = usersCards[from];
+  //   for (uint i = 0; i < fromCards.length; i++) {
+  //     if (fromCards[i].id == cardId) {
+  //       usersCards[to].push(fromCards[i]);
+  //       fromCards[i] = fromCards[fromCards.length - 1];
   //       fromCards.pop();
-
-  //       return;
+  //       break;
   //     }
   //   }
-  // }
-  // function tradeCard(
-  //   address from,
-  //   address to,
-  //   uint256 cardId
-  // ) external onlyOwner {
-  //   bool cardFound = false;
-
-  //   // Parcourir toutes les collections pour trouver la carte avec l'ID donné
-  //   for (uint i = 0; i < collectionsArray.length; i++) {
-  //     Collection.Card[] storage fromCards = usersCards[from];
-
-  //     for (uint j = 0; j < fromCards.length; j++) {
-  //       if (fromCards[j].id == cardId) {
-  //         // Carte trouvée
-  //         cardFound = true;
-
-  //         // Transférer le NFT dans le contrat `Collection`
-  //         collectionsArray[i].safeTransferFrom(from, to, cardId);
-
-  //         // Mettre à jour `usersCards`
-  //         usersCards[to].push(fromCards[j]);
-  //         fromCards[j] = fromCards[fromCards.length - 1];
-  //         fromCards.pop();
-
-  //         return;
-  //       }
-  //     }
-  //   }
-  //   require(cardFound, "Card not found");
   // }
 
   function tradeCard(
@@ -136,47 +95,61 @@ contract Main is Ownable {
     address to,
     uint256 cardId
   ) external onlyOwner {
-    Collection.Card[] storage fromCards = usersCards[from];
-    for (uint i = 0; i < fromCards.length; i++) {
-      if (fromCards[i].id == cardId) {
-        usersCards[to].push(fromCards[i]);
-        fromCards[i] = fromCards[fromCards.length - 1];
-        fromCards.pop();
-        break;
+    bool cardFound = false;
+
+    for (uint i = 0; i < collectionsArray.length; i++) {
+      // Vérifie que le token existe dans la collection
+      if (collectionsArray[i].ownerOf(cardId) == from) {
+        cardFound = true;
+
+        // Transférer le NFT dans le contrat `Collection`
+        collectionsArray[i].safeTransferFrom(from, to, cardId);
+
+        // Mettre à jour `usersCards`
+        Collection.Card[] fromCards = usersCards[from];
+        for (uint j = 0; j < fromCards.length; j++) {
+          if (fromCards[j].id == cardId) {
+            usersCards[to].push(fromCards[j]);
+            fromCards[j] = fromCards[fromCards.length - 1];
+            fromCards.pop();
+            break;
+          }
+        }
+
+        return;
       }
     }
   }
 
-  // function tradeCard(
-  //   address from,
+  // Mint un booster avec des cartes données depuis l'api
+  // function mintBooster(
   //   address to,
-  //   uint256 cardId
-  // ) external onlyOwner {
-  //   bool cardFound = false;
+  //   Collection.Card[] memory cards,
+  //   string calldata boosterURI
+  // ) external onlyOwner returns (uint256) {
+  //   boosterIdCounter++;
+  //   uint256 newBoosterId = boosterIdCounter;
 
-  //   for (uint i = 0; i < collectionsArray.length; i++) {
-  //     // Vérifie que le token existe dans la collection
-  //     if (collectionsArray[i].ownerOf(cardId) == from) {
-  //       cardFound = true;
+  //   _mint(to, newBoosterId);
+  //   _setTokenURI(newBoosterId, boosterURI);
 
-  //       // Transférer le NFT dans le contrat `Collection`
-  //       // collectionsArray[i].transferFrom(from, to, cardId);
+  //   // store les infos du boosters
+  //   boosters[newBoosterId] = Booster(newBoosterId, to, cards, boosterURI);
 
-  //       // Mettre à jour `usersCards`
-  //       Collection.Card[] fromCards = usersCards[from];
-  //       for (uint j = 0; j < fromCards.length; j++) {
-  //         if (fromCards[j].id == cardId) {
-  //           usersCards[to].push(fromCards[j]);
-  //           fromCards[j] = fromCards[fromCards.length - 1];
-  //           fromCards.pop();
-  //           break;
-  //         }
-  //       }
+  //   return newBoosterId;
+  // }
 
-  //       return;
-  //     }
+  // claim un booster 
+  // function redeemBooster(uint256 boosterId) external {
+  //   require(ownerOf(boosterId) == msg.sender, "pas le bon owner du booster");
+  //   require(!redeemedBoosters[boosterId], "booster deja claimed");
+
+  //   redeemedBoosters[boosterId] = true;
+
+  //   Booster memory booster = boosters[boosterId];
+  //   for (uint i = 0; i < booster.cards.length; i++) {
+  //     usersCards[msg.sender].push(booster.cards[i]);
   //   }
-
-  //   // require(cardFound, "Card not found or does not belong to sender");
+  //   _burn(boosterId);
   // }
 }
